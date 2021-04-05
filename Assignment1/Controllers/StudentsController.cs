@@ -150,19 +150,17 @@ namespace Lab4.Controllers
                 return NotFound();
             }
 
-            var memberships = from m in _context.CommunityMemberships
+            var registered = _context.Communities.Where(i => (from m in _context.CommunityMemberships
                                         .Include(i => i.Community)
                                         .OrderBy(i => i.Community.Title)
                                         .Where(x => x.StudentID == ID)
-                             select m;
-
-            var registered = _context.Communities.Where(i => memberships.Any(m => i == m.Community)).OrderBy(i => i.Title);
+                                                              select m).Any(m => i == m.Community)).OrderBy(i => i.Title);
 
             var unregistered = _context.Communities.Except(registered);
 
             List<StudentViewModel> students = new List<StudentViewModel>();
 
-            foreach(var community in unregistered)
+            foreach (var community in unregistered)
             {
                 var studentModel = new StudentViewModel();
                 studentModel.isRegistered = false;
@@ -183,6 +181,23 @@ namespace Lab4.Controllers
             return View(viewModel);
         }
 
+        public IActionResult AddMemberships(int studentID, string communityID)
+        {
+            _context.CommunityMemberships.Add(new CommunityMembership { StudentID = studentID, CommunityID = communityID });
+            _context.SaveChanges();
+            return RedirectToAction("EditMemberships", new { ID = studentID });
+        }
+
+
+        public IActionResult RemoveMemberships(int studentID, string communityID)
+        {
+            foreach (var membership in _context.CommunityMemberships.Where(i => i.CommunityID == communityID && i.StudentID == studentID))
+            {
+                _context.CommunityMemberships.Remove(membership);
+            }
+            _context.SaveChanges();
+            return RedirectToAction("EditMemberships", new { ID = studentID });
+        }
 
         // GET: Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
