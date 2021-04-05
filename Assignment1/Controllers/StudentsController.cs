@@ -151,7 +151,7 @@ namespace Lab4.Controllers
                                         .Where(x => x.StudentID == ID)
                                                               select m).Any(m => i == m.Community)).OrderBy(i => i.Title);
 
-            var unregistered = _context.Communities.Except(registered);
+            var unregistered = _context.Communities.Except(registered).OrderBy(i => i.Title);
 
             List<CommunityMembershipViewModel> students = new List<CommunityMembershipViewModel>();
 
