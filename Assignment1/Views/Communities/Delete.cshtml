@@ -24,13 +24,14 @@
     </dl>
     @if (Model.Advertisement == null)
     {
-<form asp-action="Delete">
-    <input type="hidden" asp-for="@Model.Community.ID" />
-    <input type="submit" value="Delete" class="btn btn-danger" /> |
-    <a asp-action="Index">Back to List</a>
-</form> }
-else
-{
-<p>You cannot delete a community until all associated advertisements are deleted!</p>
-                <a asp-action="Index">Back to List</a>            }
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="@Model.Community.ID" />
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <a asp-action="Index">Back to List</a>
+        </form> }
+     else
+    {
+        <p>You cannot delete a community until all associated advertisements are deleted!</p>
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
