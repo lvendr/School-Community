@@ -8,6 +8,6 @@ namespace Lab4.Models.ViewModels
     public class AdsViewModel
     {
         public Community Community { get; set; }
-        public IEnumerable<Advertisement> Advertisements { get; set; }
+        public IEnumerable<Advertisements> Advertisements { get; set; }
     }
 }

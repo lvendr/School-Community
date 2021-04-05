@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lab4.Data;
 using Microsoft.EntityFrameworkCore;
+using Azure.Storage.Blobs;
 
 namespace Lab4
 {
@@ -21,6 +22,10 @@ namespace Lab4
         {
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<SchoolCommunityContext>(options => options.UseSqlServer(connection));
+
+            var blobConnection = Configuration.GetConnectionString("AzureBlobStorage");
+            services.AddSingleton(new BlobServiceClient(blobConnection));
+
             services.AddControllersWithViews();
         }
 
@@ -49,16 +54,6 @@ namespace Lab4
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                endpoints.MapControllerRoute(
-                    name: "removeMembership",
-                    pattern: "{controller=Home}/{action=RemoveMemberships?studentId&communityId}"
-                    );
-
-                endpoints.MapControllerRoute(
-                    name: "addMembership",
-                    pattern: "{controller=Home}/{action=AddMemberships?studentId&communityId}"
-                    );
             });
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lab4.Data;
+using Lab4.Models.ViewModels;
 using Lab4.Models;
 using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
@@ -15,69 +16,59 @@ namespace Lab4.Controllers
 {
     public class AdvertisementsController : Controller
     {
-        /*private readonly AdsViewModel _context;*/
+        private readonly SchoolCommunityContext _context;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly string containerName = "image";
 
-        /*public AdvertisementsController(AdsViewModel context, BlobServiceClient blobServiceClient)
+        public AdvertisementsController(SchoolCommunityContext context, BlobServiceClient blobServiceClient)
         {
             _context = context;
             _blobServiceClient = blobServiceClient;
-        }*/
+        }
 
-        /*public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ID)
         {
-            return View(await _context.Advertisements.ToListAsync());
-        }*/
+            var viewModel = new AdsViewModel();
+            viewModel.Community = _context.Communities.Find(ID);
+            viewModel.Advertisements = await _context.Advertisements
+                                    .Where(i => i.CommunityId == ID)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            return View(viewModel);
+        }
 
-        /*[HttpGet]
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Create(string ID)
         {
-            return View();
+            var viewModel = new AdsViewModel();
+            viewModel.Community = _context.Communities.Find(ID);
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(IFormFile answerImage, string Question)
+        public async Task<IActionResult> Create(IFormFile ads, string communityID, string communityTitle)
         {
-            if (answerImage == null)
-                return RedirectToAction("Index");
+            if (ads == null)
+                return RedirectToAction("Index", new { ID = communityID });
 
             BlobContainerClient containerClient;
-            if (Question.Equals("Computer"))
+            // Create the container and return a container client object
+            try
             {
-                // Create the container and return a container client object
-                try
-                {
-                    containerClient = await _blobServiceClient.CreateBlobContainerAsync(computerContainerName);
-                    // Give access to public
-                    containerClient.SetAccessPolicy(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
-                }
-                catch (RequestFailedException)
-                {
-                    containerClient = _blobServiceClient.GetBlobContainerClient(computerContainerName);
-                }
+                containerClient = await _blobServiceClient.CreateBlobContainerAsync(containerName);
+                // Give access to public
+                containerClient.SetAccessPolicy(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
             }
-            else
+            catch (RequestFailedException)
             {
-                {
-                    try
-                    {
-                        containerClient = await _blobServiceClient.CreateBlobContainerAsync(earthContainerName);
-                        // Give access to public
-                        containerClient.SetAccessPolicy(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
-                    }
-                    catch (RequestFailedException)
-                    {
-                        containerClient = _blobServiceClient.GetBlobContainerClient(earthContainerName);
-                    }
-                }
+                containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             }
 
             try
             {
                 // create the blob to hold the data
-                var blockBlob = containerClient.GetBlobClient(answerImage.FileName);
+                var blockBlob = containerClient.GetBlobClient(ads.FileName);
                 if (await blockBlob.ExistsAsync())
                 {
                     await blockBlob.DeleteAsync();
@@ -86,7 +77,7 @@ namespace Lab4.Controllers
                 using (var memoryStream = new MemoryStream())
                 {
                     // copy the file data into memory
-                    await answerImage.CopyToAsync(memoryStream);
+                    await ads.CopyToAsync(memoryStream);
 
                     // navigate back to the beginning of the memory stream
                     memoryStream.Position = 0;
@@ -97,13 +88,14 @@ namespace Lab4.Controllers
                 }
 
                 // add the photo to the database if it uploaded successfully
-                var image = new AnswerImage();
+                var image = new Advertisements();
                 image.Url = blockBlob.Uri.AbsoluteUri;
-                image.FileName = answerImage.FileName;
-                if (Question.Equals("Earth"))
-                    image.Question = (Question)1;
+                image.FileName = ads.FileName;
+                image.CommunityId = communityID;
+                image.CommunityTitle = communityTitle;
 
-                _context.AnswerImages.Add(image);
+
+                _context.Advertisements.Add(image);
                 _context.SaveChanges();
             }
             catch (RequestFailedException)
@@ -111,8 +103,9 @@ namespace Lab4.Controllers
                 View("Error");
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { ID = communityID });
         }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -120,8 +113,8 @@ namespace Lab4.Controllers
                 return NotFound();
             }
 
-            var image = await _context.AnswerImages
-                .FirstOrDefaultAsync(m => m.AnswerImageId == id);
+            var image = await _context.Advertisements
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (image == null)
             {
                 return NotFound();
@@ -132,35 +125,20 @@ namespace Lab4.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int ID, string communityID)
         {
-            var image = await _context.AnswerImages.FindAsync(id);
+            var image = await _context.Advertisements.FindAsync(ID);
             BlobContainerClient containerClient;
 
-            if (image.Question.Equals("Computer"))
-            {
                 // Get the container and return a container client object
                 try
                 {
-                    containerClient = _blobServiceClient.GetBlobContainerClient(computerContainerName);
+                    containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
                 }
                 catch (RequestFailedException)
                 {
                     return View("Error");
                 }
-            }
-            else
-            {
-                // Get the container and return a container client object
-                try
-                {
-                    containerClient = _blobServiceClient.GetBlobContainerClient(earthContainerName);
-                }
-                catch (RequestFailedException)
-                {
-                    return View("Error");
-                }
-            }
 
             try
             {
@@ -171,7 +149,7 @@ namespace Lab4.Controllers
                     await blockBlob.DeleteAsync();
                 }
 
-                _context.AnswerImages.Remove(image);
+                _context.Advertisements.Remove(image);
                 await _context.SaveChangesAsync();
 
             }
@@ -180,8 +158,7 @@ namespace Lab4.Controllers
                 return View("Error");
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { ID = communityID });
         }
-    }*/
     }
 }

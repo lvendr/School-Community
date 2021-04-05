@@ -17,6 +17,7 @@ namespace Lab4.Data
         {
             modelBuilder.Entity<Student>().ToTable("student");
             modelBuilder.Entity<Community>().ToTable("community");
+            modelBuilder.Entity<Advertisements>().ToTable("advertisement");
             modelBuilder.Entity<CommunityMembership>().HasKey(c => new { c.StudentID, c.CommunityID });
         }
 
@@ -25,5 +26,7 @@ namespace Lab4.Data
         public DbSet<Community> Communities { get; set; }
 
         public DbSet<CommunityMembership> CommunityMemberships { get; set; }
+
+        public DbSet<Advertisements> Advertisements { get; set; }
     }
 }
