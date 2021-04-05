@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Lab4.Models.ViewModels
 {
-    public class FileInputViewModel
+    public class DeleteCommunityViewModel
     {
-        public string CommunityId { get; set; }
-        public string CommunityTitle { get; set; }
-        public IFormFile File { get; set; }
+        public Community Community { get; set; }
+        public Advertisements Advertisement { get; set; }
     }
 }

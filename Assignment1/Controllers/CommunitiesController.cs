@@ -149,8 +149,11 @@ namespace Lab4.Controllers
             {
                 return NotFound();
             }
+            var viewModel = new DeleteCommunityViewModel();
+            viewModel.Community = community;
+            viewModel.Advertisement = await _context.Advertisements.FirstOrDefaultAsync(m => m.CommunityId == id);
 
-            return View(community);
+            return View(viewModel);
         }
 
         // POST: Communities/Delete/5
