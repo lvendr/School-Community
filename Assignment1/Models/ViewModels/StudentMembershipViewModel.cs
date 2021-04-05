@@ -8,8 +8,6 @@ namespace Lab4.Models.ViewModels
     public class StudentMembershipViewModel
     {
         public Student Student { get; set; }
-        public IEnumerable<StudentViewModel> CommunityMemberships { get; set; }
-
-        public IEnumerable<Community> Communities { get; set; }
+        public IEnumerable<CommunityMembershipViewModel> CommunityMemberships { get; set; }
     }
 }

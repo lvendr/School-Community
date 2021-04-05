@@ -133,11 +133,6 @@ namespace Lab4.Controllers
 
         public async Task<IActionResult> EditMemberships(int? ID)
         {
-            /*var viewModel = new CommunityViewModel();
-            viewModel.Students = await _context.Students
-                .AsNoTracking()
-                .OrderBy(i => i.LastName)
-                .ToListAsync();*/
             var viewModel = new StudentMembershipViewModel();
             if (ID == null)
             {
@@ -158,21 +153,23 @@ namespace Lab4.Controllers
 
             var unregistered = _context.Communities.Except(registered);
 
-            List<StudentViewModel> students = new List<StudentViewModel>();
+            List<CommunityMembershipViewModel> students = new List<CommunityMembershipViewModel>();
 
             foreach (var community in unregistered)
             {
-                var studentModel = new StudentViewModel();
-                studentModel.isRegistered = false;
-                studentModel.Community = community;
+                var studentModel = new CommunityMembershipViewModel();
+                studentModel.IsMember = false;
+                studentModel.Title = community.Title;
+                studentModel.CommunityId = community.ID;
                 students.Add(studentModel);
             }
 
             foreach (var community in registered)
             {
-                var studentModel = new StudentViewModel();
-                studentModel.isRegistered = true;
-                studentModel.Community = community;
+                var studentModel = new CommunityMembershipViewModel();
+                studentModel.IsMember = true;
+                studentModel.Title = community.Title;
+                studentModel.CommunityId = community.ID;
                 students.Add(studentModel);
             }
 

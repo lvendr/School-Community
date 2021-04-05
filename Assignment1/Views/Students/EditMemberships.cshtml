@@ -26,18 +26,18 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Community.Title)
+                        @Html.DisplayFor(modelItem => item.Title)
                     </td>
-                    @if (!item.isRegistered)
+                    @if (!item.IsMember)
                     {
                         <td>
-                            <a asp-action="AddMemberships" asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.Community.ID">Register</a>
+                            <a asp-action="AddMemberships" asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.CommunityId">Register</a>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <a asp-action="RemoveMemberships"  asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.Community.ID">Unregister</a>
+                            <a asp-action="RemoveMemberships"  asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.CommunityId">Unregister</a>
                         </td>
                     }
                 </tr>
