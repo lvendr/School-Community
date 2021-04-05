@@ -1,0 +1,67 @@
+﻿@model Lab4.Models.ViewModels.StudentMembershipViewModel
+
+@{
+    ViewData["Title"] = "Edit Memberships";
+}
+
+<h1>Edit</h1>
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Full Name
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.FullName
+        </dd>
+    </dl>
+</div>
+<hr />
+
+<div class="row">
+    <table>
+        <tbody>
+            @foreach (var item in Model.CommunityMemberships)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Community.Title)
+                    </td>
+                    @if (!item.isRegistered)
+                    {
+                        <td>
+                            <a asp-action="AddMemberships" asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.Community.ID">Register</a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a asp-action="RemoveMemberships" asp-route-studentId="@Model.Student.ID" asp-route-communityId="@item.Community.ID">Unregister</a>
+                        </td>
+                    }
+                </tr>
+            }
+            @*@foreach (var item in Model.RegisteredMemberships)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Community.Title)
+                        </td>
+                        <td>
+                            <a asp-action="RemoveMemberships" asp-route-studentId="@item.StudentID" asp-route-communityId="@item.CommunityID">Unregister</a>
+                        </td>
+                    </tr>
+                }*@
+        </tbody>
+    </table>
+
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
