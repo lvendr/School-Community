@@ -12,6 +12,9 @@
         <input type="hidden" name="ID" value="@Model.Community.ID" />
     </div>
 </p>
+<div>
+    <a asp-controller="Communities" asp-action="Index">Back to List</a>
+</div>
 @if (Model.Advertisements.Count() == 0)
 {
     <p>There are no files to display.</p>
