@@ -37,6 +37,7 @@ namespace Lab4.Controllers
                 viewModel.CommunityMemberships = from m in _context.CommunityMemberships
                                                               .Include(i => i.Student)
                                                               .Include(i => i.Community)
+                                                              .OrderBy(i => i.Student.LastName)
                                                               .Where(x => x.CommunityID == ID)
                                                  select m;
             }
