@@ -4400,7 +4400,7 @@ input[type=button].btn-block, input[type=reset].btn-block, input[type=submit].bt
     }
 
 .navbar-light .navbar-brand {
-    color: rgba(79,41,86,.9)
+    color: rgba(104,33,122,.9)
 }
 
     .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
@@ -6524,7 +6524,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 }
 
 .bg-white {
-    background-color: #202020 !important
+    background-color: #1e1e1e !important
 }
 
 .bg-transparent {
@@ -6544,7 +6544,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 }
 
 .border-bottom {
-    border-bottom: 1px solid #4F2956 !important
+    border-bottom: 1px solid #68217a !important
 }
 
 .border-left {
@@ -10022,7 +10022,7 @@ a.text-light:focus, a.text-light:hover {
 
 .text-dark {
 	font-size: 1.1rem;
-    color: #4F2956 !important
+    color: #68217a !important
 }
 
 a.text-dark:focus, a.text-dark:hover {

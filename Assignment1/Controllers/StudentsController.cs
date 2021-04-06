@@ -33,6 +33,7 @@ namespace Lab4.Controllers
             {
                 viewModel.CommunityMemberships = from m in _context.CommunityMemberships
                                                               .Include(i => i.Community)
+                                                              .OrderBy(i => i.Community.Title)
                                                               .Where(x => x.StudentID == ID)
                                                  select m;
             }
@@ -153,7 +154,7 @@ namespace Lab4.Controllers
 
             var unregistered = _context.Communities.Except(registered).OrderBy(i => i.Title);
 
-            List<CommunityMembershipViewModel> students = new List<CommunityMembershipViewModel>();
+            List<CommunityMembershipViewModel> communities = new List<CommunityMembershipViewModel>();
 
             foreach (var community in unregistered)
             {
@@ -161,7 +162,7 @@ namespace Lab4.Controllers
                 studentModel.IsMember = false;
                 studentModel.Title = community.Title;
                 studentModel.CommunityId = community.ID;
-                students.Add(studentModel);
+                communities.Add(studentModel);
             }
 
             foreach (var community in registered)
@@ -170,10 +171,10 @@ namespace Lab4.Controllers
                 studentModel.IsMember = true;
                 studentModel.Title = community.Title;
                 studentModel.CommunityId = community.ID;
-                students.Add(studentModel);
+                communities.Add(studentModel);
             }
 
-            viewModel.CommunityMemberships = students;
+            viewModel.CommunityMemberships = communities;
 
             return View(viewModel);
         }
